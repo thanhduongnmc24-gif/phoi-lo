@@ -11,21 +11,20 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # Đã nâng cấp lên v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4 # Đã nâng cấp lên v4
       with:
-        dotnet-version: '8.0.x' # Tùy chỉnh theo version .NET anh hai dùng, mặc định trên codespace thường là 8.0
+        dotnet-version: '8.0.x' 
 
     - name: Build and Publish
-      # Chui vào thư mục PhoiLo và build ra file .exe duy nhất
       run: |
         cd PhoiLo
-        dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../publish
+        dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableWindowsTargeting=true -o ../publish
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # Đã nâng cấp lên v4 và sửa lại cho chuẩn
       with:
         name: PhoiLo-App
         path: publish/

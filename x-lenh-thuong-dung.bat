@@ -5,20 +5,21 @@ git add . && git commit -m "Cập nhật" && git push origin main
 tạo thư mục out để lưu file exe
     dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableWindowsTargeting=true -o out
 
-cách làm bỏ qua tệp >100Mb
-    # 1. Mở gói bưu kiện vừa đóng ra (Hủy commit vừa rồi, nhưng KHÔNG làm mất code anh hai đã viết)
-        git reset HEAD~1
+# Di chuyển ra thư mục gốc của dự án cho chắc cú
+cd /workspaces/phoi-lo
 
-    # 2. Xóa sổ hoàn toàn cái thư mục rác "D:" đang nằm lỳ trong máy ảo
-        rm -rf "D:"
-        rm -rf "D:/"
+# Bắt Git "quên" các thư mục chứa file build nặng đi (chỉ quên trên Git chứ không xóa file thật)
+git rm -r --cached PhoiLo/out/
+git rm -r --cached PhoiLo/bin/
+git rm -r --cached PhoiLo/obj/
 
-    # 3. Gỡ bỏ nó khỏi trí nhớ của Git
-        git rm -r --cached "D:" 2>/dev/null
+# Ghi luật vào file .gitignore để từ nay về sau Git tự động phớt lờ mấy thư mục này
+echo "PhoiLo/out/" >> .gitignore
+echo "PhoiLo/bin/" >> .gitignore
+echo "PhoiLo/obj/" >> .gitignore
 
-    # 4. Đóng gói lại từ đầu (lúc này thằng D: đã chết nên không thể chui vào bưu kiện được nữa)
-        it add .
-        git commit -m "Dọn dẹp triệt để thư mục ảo D: và file rác 155MB"
+# Cập nhật lại cái commit bị lỗi lúc nãy, chính thức vứt cục .exe ra khỏi kiện hàng
+git commit --amend --no-edit
 
-    # 5. Gửi lên mây
-        git push origin main
+# Đẩy mã nguồn nhẹ nhàng lên mây
+git push origin main
