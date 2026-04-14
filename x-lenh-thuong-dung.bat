@@ -3,7 +3,7 @@
 git add . && git commit -m "Cập nhật" && git push origin main
 
 tạo thư mục out để lưu file exe
-    dotnet publish PhoiLo/PhoiLo.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out 
+    dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableWindowsTargeting=true -o out
 
 cách làm bỏ qua tệp >100Mb
     # 1. Mở gói bưu kiện vừa đóng ra (Hủy commit vừa rồi, nhưng KHÔNG làm mất code anh hai đã viết)

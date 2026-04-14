@@ -1,9 +1,0 @@
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/MainWindow.baml
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/UserControls/SheetDataControl.baml
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/MainWindow.g.cs
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/PhoiLo/App.g.cs
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/PhoiLo/MainWindow.g.cs
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/UserControls/SheetDataControl.g.cs
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/App.g.cs
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/PhoiLo_MarkupCompile.cache
-/workspaces/phoi-lo/PhoiLo/obj/Release/net8.0-windows/win-x64/PhoiLo_MarkupCompile.lref
