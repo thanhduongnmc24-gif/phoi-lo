@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -11,14 +14,65 @@ using Google.Apis.Util.Store;
 
 namespace PhoiLo.UserControls
 {
+    // Class nhỏ để cấu trúc dữ liệu lưu trữ
+    public class AppConfig
+    {
+        public string ClientId { get; set; } = "";
+        public string ClientSecret { get; set; } = "";
+        public string SheetId { get; set; } = "";
+        public string Range { get; set; } = "Sheet1!A1:Z100";
+    }
+
     public partial class SheetDataControl : UserControl
     {
         static string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
         static string ApplicationName = "PhoiLo App";
+        static string ConfigFilePath = "config.json";
 
         public SheetDataControl()
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadConfig();
+        }
+
+        // Đọc thông tin đã lưu
+        private void LoadConfig()
+        {
+            try
+            {
+                if (File.Exists(ConfigFilePath))
+                {
+                    string json = File.ReadAllText(ConfigFilePath);
+                    AppConfig config = JsonSerializer.Deserialize<AppConfig>(json) ?? new AppConfig();
+                    TxtClientId.Text = config.ClientId;
+                    TxtClientSecret.Text = config.ClientSecret;
+                    TxtSheetId.Text = config.SheetId;
+                    TxtRange.Text = config.Range;
+                }
+            }
+            catch { /* Lỗi đọc file thì kệ, cho người dùng nhập lại */ }
+        }
+
+        // Ghi nhớ thông tin
+        private void SaveConfig()
+        {
+            try
+            {
+                AppConfig config = new AppConfig
+                {
+                    ClientId = TxtClientId.Text.Trim(),
+                    ClientSecret = TxtClientSecret.Text.Trim(),
+                    SheetId = TxtSheetId.Text.Trim(),
+                    Range = TxtRange.Text.Trim()
+                };
+                string json = JsonSerializer.Serialize(config);
+                File.WriteAllText(ConfigFilePath, json);
+            }
+            catch { }
         }
 
         private async void BtnConnect_Click(object sender, RoutedEventArgs e)
@@ -34,16 +88,24 @@ namespace PhoiLo.UserControls
                 return;
             }
 
+            // Lưu tự động
+            SaveConfig();
+
+            // Hiệu ứng chờ (Loading)
+            BtnConnect.IsEnabled = false;
+            BtnConnect.Content = "⏳ ĐANG LẤY DỮ LIỆU...";
+            Mouse.OverrideCursor = Cursors.Wait;
+            TxtStatus.Text = "Đang kết nối thần giao cách cảm với Google...";
+            SheetDataGrid.Visibility = Visibility.Collapsed;
+
             try
             {
-                // Cấu hình thông tin xác thực
                 ClientSecrets secrets = new ClientSecrets
                 {
                     ClientId = clientId,
                     ClientSecret = clientSecret
                 };
 
-                // [Suy luận] Khi ứng dụng chạy trên Windows, lệnh này sẽ mở trình duyệt web lên yêu cầu anh hai đăng nhập Google
                 UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     secrets,
                     Scopes,
@@ -51,57 +113,76 @@ namespace PhoiLo.UserControls
                     CancellationToken.None,
                     new FileDataStore("PhoiLo.GoogleAuth.Store"));
 
-                // Khởi tạo dịch vụ Google Sheet
                 var service = new SheetsService(new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
 
-                // Gửi yêu cầu lấy dữ liệu
                 SpreadsheetsResource.ValuesResource.GetRequest request = service.Spreadsheets.Values.Get(spreadsheetId, range);
                 var response = await request.ExecuteAsync();
                 IList<IList<object>> values = response.Values;
 
                 if (values != null && values.Count > 0)
                 {
-                    // Chuyển đổi dữ liệu thành DataTable
                     DataTable dt = new DataTable();
-                    
-                    // Dòng đầu tiên trong Sheet được dùng làm Header (Tiêu đề cột)
                     var headers = values[0];
-                    foreach (var header in headers)
+                    
+                    // Xử lý tiêu đề cột để tránh bị rỗng gây lỗi bảng
+                    for (int j = 0; j < headers.Count; j++)
                     {
-                        dt.Columns.Add(header.ToString());
+                        string colName = headers[j]?.ToString()?.Trim() ?? "";
+                        if (string.IsNullOrEmpty(colName)) colName = $"Cột_Trống_{j + 1}";
+                        
+                        // Chống trùng tên cột
+                        while (dt.Columns.Contains(colName)) colName += "_1";
+                        dt.Columns.Add(colName);
                     }
 
-                    // Các dòng tiếp theo là dữ liệu
+                    // Nạp dữ liệu
                     for (int i = 1; i < values.Count; i++)
                     {
                         var row = dt.NewRow();
                         var rowData = values[i];
+                        bool hasData = false;
+
                         for (int j = 0; j < headers.Count; j++)
                         {
                             if (j < rowData.Count)
                             {
-                                row[j] = rowData[j]?.ToString() ?? "";
+                                string cellValue = rowData[j]?.ToString() ?? "";
+                                row[j] = cellValue;
+                                if (!string.IsNullOrEmpty(cellValue)) hasData = true;
                             }
                         }
-                        dt.Rows.Add(row);
+                        
+                        // Chỉ thêm dòng nếu có dữ liệu thật sự
+                        if (hasData) dt.Rows.Add(row);
                     }
 
-                    // Đưa dữ liệu lên DataGrid
                     SheetDataGrid.ItemsSource = dt.DefaultView;
-                    MessageBox.Show("Lấy dữ liệu thành công rồi anh hai!", "Thông báo");
+                    
+                    // Biến hình! Ẩn chữ, hiện bảng
+                    TxtStatus.Text = "";
+                    SheetDataGrid.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    MessageBox.Show("Không tìm thấy dữ liệu trong bảng tính.", "Thông báo");
+                    TxtStatus.Text = "Kéo về được nguyên một vùng trống trơn anh hai ơi! Đổi Range thử xem.";
+                    TxtStatus.Foreground = System.Windows.Media.Brushes.Red;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi");
+                TxtStatus.Text = "Gãy cánh rồi: " + ex.Message;
+                TxtStatus.Foreground = System.Windows.Media.Brushes.Red;
+            }
+            finally
+            {
+                // Trả lại nguyên trạng cho giao diện
+                BtnConnect.IsEnabled = true;
+                BtnConnect.Content = "🚀 KẾT NỐI & LẤY DỮ LIỆU";
+                Mouse.OverrideCursor = null;
             }
         }
     }
