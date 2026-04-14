@@ -7,12 +7,14 @@ namespace PhoiLo.Windows
         public SettingWindow()
         {
             InitializeComponent();
-            // Gán DataContext vào đối tượng Config dùng chung để đồng bộ real-time
+            // Sử dụng chung bản Config của App để đồng bộ Real-time
             this.DataContext = App.Config;
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
+            // Gọi lệnh lưu toàn bộ thông số vào file
+            App.Config.SaveToFile();
             this.Close();
         }
     }

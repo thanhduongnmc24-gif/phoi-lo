@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Windows;
@@ -24,15 +23,24 @@ namespace PhoiLo.UserControls
         private async void LoadDataFromGoogle()
         {
             var config = App.Config;
+            // Lưu lại cấu hình hiện tại trước khi gọi API
+            config.SaveToFile();
+
             if (string.IsNullOrEmpty(config.ClientId) || string.IsNullOrEmpty(config.SheetId)) return;
 
             try
             {
                 UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     new ClientSecrets { ClientId = config.ClientId, ClientSecret = config.ClientSecret },
-                    new[] { SheetsService.Scope.SpreadsheetsReadonly }, "user", CancellationToken.None, new FileDataStore("PhoiLo.Auth"));
+                    new[] { SheetsService.Scope.SpreadsheetsReadonly }, 
+                    "user", CancellationToken.None, new FileDataStore("PhoiLo.Auth"));
 
-                var service = new SheetsService(new BaseClientService.Initializer() { HttpClientInitializer = credential, ApplicationName = "PhoiLo" });
+                var service = new SheetsService(new BaseClientService.Initializer() 
+                { 
+                    HttpClientInitializer = credential, 
+                    ApplicationName = "PhoiLo" 
+                });
+
                 var response = await service.Spreadsheets.Values.Get(config.SheetId, config.Range).ExecuteAsync();
 
                 if (response.Values != null)
@@ -53,7 +61,10 @@ namespace PhoiLo.UserControls
                     MainDataGrid.ItemsSource = dt.DefaultView;
                 }
             }
-            catch (Exception ex) { MessageBox.Show("Lỗi lấy dữ liệu: " + ex.Message); }
+            catch (Exception ex) 
+            { 
+                MessageBox.Show("Lỗi kết nối: " + ex.Message); 
+            }
         }
     }
 }
