@@ -15,8 +15,8 @@ namespace PhoiLo.Models
         public string SheetId { get => _sheetId; set { _sheetId = value; OnPropertyChanged(); } }
         public string Range { get => _range; set { _range = value; OnPropertyChanged(); } }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

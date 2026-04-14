@@ -1,13 +1,11 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
+using PhoiLo.Models;
 
-namespace PhoiLo;
-
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
-public partial class App : Application
+namespace PhoiLo
 {
+    public partial class App : Application
+    {
+        // Tạo một đối tượng cấu hình duy nhất
+        public static AppConfig Config { get; } = new AppConfig();
+    }
 }
-
