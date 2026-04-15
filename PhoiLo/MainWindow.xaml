@@ -14,7 +14,7 @@
             <TextBlock Text="DANH MỤC" Foreground="White" FontWeight="Bold" Margin="20,30,20,20" HorizontalAlignment="Center"
                        FontSize="{Binding MenuFontSize}" FontFamily="{Binding MenuFontFamily}"/>
             
-            <Button Content="📊 Dữ liệu lò" Click="BtnLoadSheet_Click" Height="45" Margin="10,5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"
+            <Button Content="📊 Phôi ra lò(gởi pulpit 1)" Click="BtnLoadSheet_Click" Height="45" Margin="10,5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"
                     FontSize="{Binding MenuFontSize}" FontFamily="{Binding MenuFontFamily}"/>
             
             <Button Content="⚙ Cài đặt" Click="BtnOpenSetting_Click" Height="45" Margin="10,5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"
