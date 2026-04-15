@@ -1,54 +1,21 @@
-<Window x:Class="PhoiLo.Windows.SettingWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Cài đặt hệ thống" Height="600" Width="500" WindowStartupLocation="CenterOwner">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="20">
-            <TextBlock Text="⚙ CẤU HÌNH HỆ THỐNG" FontWeight="Bold" FontSize="18" Margin="0,0,0,15"/>
+using System.Windows;
 
-            <GroupBox Header="Thông số API &amp; Sheet" Margin="0,0,0,15" Padding="10">
-                <StackPanel>
-                    <TextBlock Text="Client ID:"/>
-                    <TextBox Text="{Binding ClientId, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10" Padding="5"/>
-                    
-                    <TextBlock Text="Client Secret:"/>
-                    <TextBox Text="{Binding ClientSecret, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10" Padding="5"/>
-                    
-                    <TextBlock Text="Sheet ID:"/>
-                    <TextBox Text="{Binding SheetId, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10" Padding="5"/>
-                    
-                    <TextBlock Text="Vùng lấy dữ liệu:"/>
-                    <TextBox Text="{Binding Range, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,10" Padding="5"/>
-                </StackPanel>
-            </GroupBox>
+namespace PhoiLo.Windows
+{
+    public partial class SettingWindow : Window
+    {
+        public SettingWindow()
+        {
+            InitializeComponent();
+            // Gán dữ liệu dùng chung để thay đổi real-time
+            this.DataContext = App.Config;
+        }
 
-            <GroupBox Header="Giao diện bảng &amp; Menu" Padding="10">
-                <StackPanel>
-                    <TextBlock Text="{Binding ColumnWidth, StringFormat='Độ rộng cột: {0:0}'}"/>
-                    <Slider Minimum="50" Maximum="400" Value="{Binding ColumnWidth}" Margin="0,5,0,15"/>
-
-                    <TextBlock Text="Font chữ bảng:"/>
-                    <ComboBox SelectedValuePath="Content" SelectedValue="{Binding TableFontFamily}" Margin="0,5">
-                        <ComboBoxItem Content="Segoe UI"/>
-                        <ComboBoxItem Content="Arial"/>
-                        <ComboBoxItem Content="Times New Roman"/>
-                    </ComboBox>
-
-                    <TextBlock Text="{Binding TableFontSize, StringFormat='Cỡ chữ bảng: {0:0}'}" Margin="0,10,0,0"/>
-                    <Slider Minimum="10" Maximum="30" Value="{Binding TableFontSize}" Margin="0,5,0,15"/>
-
-                    <TextBlock Text="Font chữ Menu:"/>
-                    <ComboBox SelectedValuePath="Content" SelectedValue="{Binding MenuFontFamily}" Margin="0,5">
-                        <ComboBoxItem Content="Segoe UI"/>
-                        <ComboBoxItem Content="Arial"/>
-                    </ComboBox>
-
-                    <TextBlock Text="{Binding MenuFontSize, StringFormat='Cỡ chữ Menu: {0:0}'}" Margin="0,10,0,0"/>
-                    <Slider Minimum="12" Maximum="24" Value="{Binding MenuFontSize}"/>
-                </StackPanel>
-            </GroupBox>
-
-            <Button Content="💾 LƯU VÀ ĐÓNG" Click="BtnSave_Click" Height="40" Margin="0,20,0,0" Background="#27ae60" Foreground="White" FontWeight="Bold"/>
-        </StackPanel>
-    </ScrollViewer>
-</Window>
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            // Lưu toàn bộ các ô nhập liệu vào file config.json
+            App.Config.SaveToFile();
+            this.Close();
+        }
+    }
+}
