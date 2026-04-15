@@ -65,17 +65,25 @@ obj/Debug/net8.0-windows/
  MainWindow.g.cs
  PhoiLo.AssemblyInfo.cs
  PhoiLo.GlobalUsings.g.cs
- UserControls/SheetDataControl.g.cs
+ UserControls/
+  KcsDataControl.g.cs
+  SheetDataControl.g.cs
  Windows/SettingWindow.g.cs
-UserControls/SheetDataControl.xaml.cs
+UserControls/
+ KcsDataControl.xaml.cs
+ SheetDataControl.xaml.cs
 Windows/SettingWindow.xaml.cs
 
 [metadataReferences]
 <NUGET>/
+ closedxml/0.102.2/lib/netstandard2.1/ClosedXML.dll
+ documentformat.openxml/2.16.0/lib/netstandard2.0/DocumentFormat.OpenXml.dll
+ excelnumberformat/1.1.0/lib/netstandard2.0/ExcelNumberFormat.dll
  google.apis.auth/1.68.0/lib/net6.0/Google.Apis.Auth.dll
  google.apis.core/1.68.0/lib/net6.0/Google.Apis.Core.dll
  google.apis.sheets.v4/1.68.0.3568/lib/net6.0/Google.Apis.Sheets.v4.dll
  google.apis/1.68.0/lib/net6.0/Google.Apis.dll
+ irony.netcore/1.0.11/lib/netstandard1.6/Irony.dll
  microsoft.netcore.app.ref/8.0.22/ref/net8.0/
   Microsoft.CSharp.dll
   Microsoft.VisualBasic.Core.dll
@@ -277,7 +285,9 @@ Windows/SettingWindow.xaml.cs
   UIAutomationTypes.dll
   WindowsBase.dll
  newtonsoft.json/13.0.3/lib/net6.0/Newtonsoft.Json.dll
+ sixlabors.fonts/1.0.0/lib/netcoreapp3.1/SixLabors.Fonts.dll
  system.management/7.0.2/lib/net7.0/System.Management.dll
+ xlparser/1.5.2/lib/netstandard1.6/XLParser.dll
 
 [analyzerReferences]
 ../../../usr/share/dotnet/sdk/10.0.100/Sdks/Microsoft.NET.Sdk/analyzers/

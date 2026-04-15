@@ -9,13 +9,18 @@ namespace PhoiLo
         public MainWindow()
         {
             InitializeComponent();
-            // Tự động nạp màn hình dữ liệu lò khi khởi động
             MainContentArea.Content = new SheetDataControl();
         }
 
         private void BtnLoadSheet_Click(object sender, RoutedEventArgs e)
         {
             MainContentArea.Content = new SheetDataControl();
+        }
+
+        // Sự kiện khi bấm nút Phôi gởi KCS
+        private void BtnLoadKcs_Click(object sender, RoutedEventArgs e)
+        {
+            MainContentArea.Content = new KcsDataControl();
         }
 
         private void BtnOpenSetting_Click(object sender, RoutedEventArgs e)
