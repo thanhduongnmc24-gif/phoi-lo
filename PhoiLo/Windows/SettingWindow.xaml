@@ -4,16 +4,33 @@
         Title="Cài đặt hệ thống" Height="650" Width="1000" WindowStartupLocation="CenterOwner">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/> <ColumnDefinition Width="*"/>   </Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/> 
+            <ColumnDefinition Width="*"/>   
+        </Grid.ColumnDefinitions>
 
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="0,0,10,0">
                 <GroupBox Header="Thông số API &amp; Sheet" Padding="10" Margin="0,0,0,10">
                     <StackPanel>
                         <TextBlock Text="Client ID:"/> <TextBox Text="{Binding ClientId}" Margin="0,5"/>
+                        <TextBlock Text="Client Secret:"/> <TextBox Text="{Binding ClientSecret}" Margin="0,5"/>
                         <TextBlock Text="Sheet ID:"/> <TextBox Text="{Binding SheetId}" Margin="0,5"/>
                         <TextBlock Text="Vùng lấy dữ liệu:"/> <TextBox Text="{Binding Range}" Margin="0,5"/>
                     </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Độ rộng từng cột" Padding="10" Margin="0,0,0,10">
+                    <UniformGrid Columns="2">
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col1Width, StringFormat='STT: {0:0}'}"/><Slider Minimum="30" Maximum="200" Value="{Binding Col1Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col2Width, StringFormat='Phương thức: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col2Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col3Width, StringFormat='Mác phôi: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col3Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col4Width, StringFormat='Mẻ số: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col4Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col5Width, StringFormat='Cây nạp: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col5Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col6Width, StringFormat='Ra sàn: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col6Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col7Width, StringFormat='Hư CN: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col7Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col8Width, StringFormat='Hồi lò: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col8Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col9Width, StringFormat='Tổng thanh: {0:0}'}"/><Slider Minimum="50" Maximum="400" Value="{Binding Col9Width}"/></StackPanel>
+                        <StackPanel Margin="5,0,15,10"><TextBlock Text="{Binding Col10Width, StringFormat='Chiều dài: {0:0}'}"/><Slider Minimum="50" Maximum="300" Value="{Binding Col10Width}"/></StackPanel>
+                    </UniformGrid>
                 </GroupBox>
                 <GroupBox Header="Giao diện &amp; Font" Padding="10" Margin="0,0,0,10">
                     <StackPanel>
@@ -29,12 +46,12 @@
             </StackPanel>
         </ScrollViewer>
 
-        <GroupBox Grid.Column="1" Header="DANH SÁCH NHÂN SỰ (Kíp A/B/C)" Padding="10">
+        <GroupBox Grid.Column="1" Header="DANH SÁCH NHÂN SỰ (Kíp A/B/C) - Cột 'Chức vụ' ghi rõ 'Vận hành' hoặc 'Tổ trưởng'" Padding="10">
             <DataGrid ItemsSource="{Binding StaffList}" AutoGenerateColumns="False" CanUserAddRows="True" AlternatingRowBackground="#f2f2f2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Kíp" Binding="{Binding Kip}" Width="60"/>
                     <DataGridTextColumn Header="Họ Tên" Binding="{Binding HoTen}" Width="*"/>
-                    <DataGridTextColumn Header="Chức vụ" Binding="{Binding ChứcVu}" Width="150"/>
+                    <DataGridTextColumn Header="Chức vụ" Binding="{Binding ChucVu}" Width="150"/> 
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>

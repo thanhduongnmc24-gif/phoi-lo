@@ -9,14 +9,14 @@ namespace PhoiLo.Models
 {
     public class StaffMember
     {
-        public string Kip { get; set; } = "A"; // A, B, hoặc C
+        public string Kip { get; set; } = "A"; 
         public string HoTen { get; set; } = "";
-        public string ChứcVu { get; set; } = "Vận hành"; 
+        // Đổi thành không dấu để tránh lỗi build
+        public string ChucVu { get; set; } = "Vận hành"; 
     }
 
     public class AppConfig : INotifyPropertyChanged
     {
-        // Các cấu hình cũ
         private string _clientId = "";
         private string _clientSecret = "";
         private string _sheetId = "";
@@ -28,14 +28,12 @@ namespace PhoiLo.Models
         private double _tableFontSize = 14; private double _menuFontSize = 16;
         private string _tableFontFamily = "Segoe UI"; private string _menuFontFamily = "Segoe UI";
 
-        // Cấu hình mới cho Nhân sự và Header
         private ObservableCollection<StaffMember> _staffList = new ObservableCollection<StaffMember>();
         private DateTime _currentDate = DateTime.Now;
         private string _currentKip = "1A";
         private string _currentToTruong = "";
         private string _currentVanHanh = "";
 
-        // Properties (Tèo viết gọn lại cho anh hai dễ nhìn)
         public string ClientId { get => _clientId; set { _clientId = value; OnPropertyChanged(); } }
         public string ClientSecret { get => _clientSecret; set { _clientSecret = value; OnPropertyChanged(); } }
         public string SheetId { get => _sheetId; set { _sheetId = value; OnPropertyChanged(); } }
@@ -65,8 +63,20 @@ namespace PhoiLo.Models
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public void SaveToFile() => File.WriteAllText("config.json", JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true }));
+        
         public static AppConfig LoadFromFile() {
-            try { if (File.Exists("config.json")) return JsonSerializer.Deserialize<AppConfig>(File.ReadAllText("config.json")) ?? new AppConfig(); } catch { }
+            try { 
+                if (File.Exists("config.json")) {
+                    var cfg = JsonSerializer.Deserialize<AppConfig>(File.ReadAllText("config.json"));
+                    if (cfg != null) {
+                        // Vá lỗi file config cũ không có dữ liệu
+                        if (cfg.StaffList == null) cfg.StaffList = new ObservableCollection<StaffMember>();
+                        if (cfg.CurrentDate.Year < 2000) cfg.CurrentDate = DateTime.Now; // Sửa lỗi văng DatePicker
+                        if (string.IsNullOrEmpty(cfg.CurrentKip)) cfg.CurrentKip = "1A";
+                        return cfg;
+                    }
+                }
+            } catch { }
             return new AppConfig();
         }
     }

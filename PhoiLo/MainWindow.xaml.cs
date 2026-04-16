@@ -19,17 +19,21 @@ namespace PhoiLo
 
         private void LoadStaffToHeader()
         {
-            if (CbGlobalKip == null) return;
+            // Chốt chặn an toàn: Nếu giao diện chưa load xong thì không làm gì cả
+            if (CbGlobalKip == null || CbGlobalToTruong == null || CbGlobalVanHanh == null) return;
+            
             string kip = App.Config.CurrentKip;
             if (string.IsNullOrEmpty(kip)) return;
             string group = kip.Substring(kip.Length - 1).ToUpper();
 
             var staff = App.Config.StaffList;
-            CbGlobalToTruong.ItemsSource = staff.Where(s => s.Kip.ToUpper() == group && s.ChứcVu.Contains("Tổ trưởng")).ToList();
-            CbGlobalVanHanh.ItemsSource = staff.Where(s => s.Kip.ToUpper() == group && s.ChứcVu.Contains("Vận hành")).ToList();
+            if (staff == null) return;
+
+            CbGlobalToTruong.ItemsSource = staff.Where(s => s.Kip.ToUpper() == group && s.ChucVu.Contains("Tổ trưởng")).ToList();
+            CbGlobalVanHanh.ItemsSource = staff.Where(s => s.Kip.ToUpper() == group && s.ChucVu.Contains("Vận hành")).ToList();
             
-            CbGlobalToTruong.SelectedIndex = 0;
-            CbGlobalVanHanh.SelectedIndex = 0;
+            if (CbGlobalToTruong.Items.Count > 0) CbGlobalToTruong.SelectedIndex = 0;
+            if (CbGlobalVanHanh.Items.Count > 0) CbGlobalVanHanh.SelectedIndex = 0;
         }
 
         private void BtnLoadSheet_Click(object sender, RoutedEventArgs e) => MainContentArea.Content = new SheetDataControl();
@@ -37,7 +41,7 @@ namespace PhoiLo
         private void BtnOpenSetting_Click(object sender, RoutedEventArgs e) {
             SettingWindow setWin = new SettingWindow { Owner = this };
             setWin.ShowDialog();
-            LoadStaffToHeader(); // Cập nhật lại header sau khi sửa nhân sự
+            LoadStaffToHeader(); 
         }
     }
 }
