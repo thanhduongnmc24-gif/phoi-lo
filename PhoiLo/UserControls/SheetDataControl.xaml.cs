@@ -49,10 +49,38 @@ namespace PhoiLo.UserControls
                         }
                         dt.Rows.Add(row);
                     }
+
+                    // [Suy luận] Thêm ?. để chặn lỗi CS8602 cực kỳ an toàn
+                    dt.RowChanged += (s, e) => CalculateTotal(dt);
+                    dt.RowDeleted += (s, e) => CalculateTotal(dt);
+                    dt.ColumnChanged += (s, e) => { if (e.Column?.ColumnName == "Số cây nạp lò") CalculateTotal(dt); };
+
                     MainDataGrid.ItemsSource = dt.DefaultView;
+                    CalculateTotal(dt); 
                 }
             }
             catch (Exception ex) { MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message); }
+        }
+
+        private void CalculateTotal(DataTable dt)
+        {
+            int total = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row.RowState != DataRowState.Deleted) 
+                {
+                    if (int.TryParse(row["Số cây nạp lò"]?.ToString(), out int val))
+                    {
+                        total += val;
+                    }
+                }
+            }
+            
+            Dispatcher.Invoke(() => 
+            {
+                // Nếu anh hai đã lưu file XAML thành công thì dòng này sẽ chạy mượt mà
+                if (TxtTongPhoi != null) TxtTongPhoi.Text = total.ToString();
+            });
         }
 
         private async void BtnPush_Click(object sender, RoutedEventArgs e)
@@ -62,7 +90,6 @@ namespace PhoiLo.UserControls
 
             try
             {
-                // [Suy luận] Sửa lỗi CS8602 bằng cách dùng as và kiểm tra null an toàn
                 var dv = MainDataGrid.ItemsSource as DataView;
                 if (dv?.Table == null) return;
 
@@ -71,7 +98,6 @@ namespace PhoiLo.UserControls
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    // [Suy luận] Sửa lỗi CS8620 bằng cách lọc null trước khi ép kiểu ToList
                     var rowData = row.ItemArray.Select(x => x ?? "").ToList();
                     values.Add(rowData);
                 }

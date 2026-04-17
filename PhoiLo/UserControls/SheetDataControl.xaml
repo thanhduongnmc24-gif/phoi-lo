@@ -2,13 +2,18 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PhoiLo">
+    
     <Grid DataContext="{Binding Source={x:Static local:App.Config}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="280"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Margin="0,0,0,10">
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
             <TextBlock Text="DỮ LIỆU PHÔI GỞI PULPIT 1" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="🚀 Gởi phôi lên gg sheet" Click="BtnPush_Click" Padding="15,5" Background="#3498db" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
@@ -16,7 +21,7 @@
             </StackPanel>
         </DockPanel>
 
-        <DataGrid x:Name="MainDataGrid" Grid.Row="1" 
+        <DataGrid x:Name="MainDataGrid" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0"
                   FontSize="{Binding TableFontSize}" FontFamily="{Binding TableFontFamily}"
                   AutoGenerateColumns="False" IsReadOnly="False" AlternatingRowBackground="#f2f2f2"
                   SelectionUnit="CellOrRowHeader">
@@ -47,5 +52,20 @@
                 <DataGridTextColumn Header="Chiều dài" Binding="{Binding [Chiều dài]}" Width="{Binding Source={x:Static local:App.Config}, Path=Col10Width}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <Border Grid.Row="1" Grid.Column="1" Background="#ecf0f1" CornerRadius="5" Padding="15">
+            <StackPanel>
+                <TextBlock Text="THÔNG TIN TỔNG HỢP" FontWeight="Bold" FontSize="15" Margin="0,0,0,15" Foreground="#2c3e50" HorizontalAlignment="Center"/>
+                
+                <TextBlock Text="Tổng phôi gởi Pulpit 1:" FontWeight="Bold" Margin="0,10,0,5"/>
+                <TextBox x:Name="TxtTongPhoi" IsReadOnly="True" Background="#dcdde1" Foreground="#c0392b" FontWeight="Bold" FontSize="20" Padding="8" TextAlignment="Center" Text="0"/>
+
+                <TextBlock Text="Phôi ca trước giao:" FontWeight="Bold" Margin="0,15,0,5"/>
+                <TextBox x:Name="TxtPhoiCaTruoc" FontSize="16" Padding="5"/>
+
+                <TextBlock Text="Phôi ngoài sàn nạp phôi:" FontWeight="Bold" Margin="0,15,0,5"/>
+                <TextBox x:Name="TxtPhoiNgoaiSan" FontSize="16" Padding="5"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>
