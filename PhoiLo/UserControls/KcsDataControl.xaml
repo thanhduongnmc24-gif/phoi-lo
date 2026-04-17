@@ -14,7 +14,9 @@
                 <Button Content="🚀 XUẤT EXCEL" Click="BtnExportExcel_Click" Padding="20,5" Background="#2980b9" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>
         </DockPanel>
-        <DataGrid x:Name="KcsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" AlternatingRowBackground="#f2f2f2" PreviewKeyDown="KcsDataGrid_PreviewKeyDown">
+        <DataGrid x:Name="KcsDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" 
+                  AlternatingRowBackground="#f2f2f2" PreviewKeyDown="KcsDataGrid_PreviewKeyDown"
+                  SelectionUnit="CellOrRowHeader">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="40" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Phương thức nạp" Binding="{Binding PhuongThuc}" Width="150"/>

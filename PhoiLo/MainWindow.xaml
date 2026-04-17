@@ -5,7 +5,8 @@
         Title="Hệ Thống Quản Lý Phôi" Height="700" Width="1150" WindowStartupLocation="CenterScreen">
     <Grid DataContext="{Binding Source={x:Static local:App.Config}}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/> <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/> 
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>

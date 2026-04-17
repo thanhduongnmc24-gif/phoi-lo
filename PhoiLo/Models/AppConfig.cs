@@ -11,7 +11,6 @@ namespace PhoiLo.Models
     {
         public string Kip { get; set; } = "A"; 
         public string HoTen { get; set; } = "";
-        // Đổi thành không dấu để tránh lỗi build
         public string ChucVu { get; set; } = "Vận hành"; 
     }
 
@@ -69,9 +68,8 @@ namespace PhoiLo.Models
                 if (File.Exists("config.json")) {
                     var cfg = JsonSerializer.Deserialize<AppConfig>(File.ReadAllText("config.json"));
                     if (cfg != null) {
-                        // Vá lỗi file config cũ không có dữ liệu
                         if (cfg.StaffList == null) cfg.StaffList = new ObservableCollection<StaffMember>();
-                        if (cfg.CurrentDate.Year < 2000) cfg.CurrentDate = DateTime.Now; // Sửa lỗi văng DatePicker
+                        if (cfg.CurrentDate.Year < 2000) cfg.CurrentDate = DateTime.Now; 
                         if (string.IsNullOrEmpty(cfg.CurrentKip)) cfg.CurrentKip = "1A";
                         return cfg;
                     }

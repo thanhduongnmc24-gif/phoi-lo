@@ -8,10 +8,14 @@ namespace PhoiLo
 {
     public partial class MainWindow : Window
     {
+        // [Suy luận] Giữ lại nguyên vẹn màn hình để không bị mất dữ liệu
+        private SheetDataControl _sheetControl = new SheetDataControl();
+        private KcsDataControl _kcsControl = new KcsDataControl();
+
         public MainWindow()
         {
             InitializeComponent();
-            MainContentArea.Content = new SheetDataControl();
+            MainContentArea.Content = _sheetControl;
             LoadStaffToHeader();
         }
 
@@ -19,9 +23,7 @@ namespace PhoiLo
 
         private void LoadStaffToHeader()
         {
-            // Chốt chặn an toàn: Nếu giao diện chưa load xong thì không làm gì cả
             if (CbGlobalKip == null || CbGlobalToTruong == null || CbGlobalVanHanh == null) return;
-            
             string kip = App.Config.CurrentKip;
             if (string.IsNullOrEmpty(kip)) return;
             string group = kip.Substring(kip.Length - 1).ToUpper();
@@ -36,8 +38,9 @@ namespace PhoiLo
             if (CbGlobalVanHanh.Items.Count > 0) CbGlobalVanHanh.SelectedIndex = 0;
         }
 
-        private void BtnLoadSheet_Click(object sender, RoutedEventArgs e) => MainContentArea.Content = new SheetDataControl();
-        private void BtnLoadKcs_Click(object sender, RoutedEventArgs e) => MainContentArea.Content = new KcsDataControl();
+        private void BtnLoadSheet_Click(object sender, RoutedEventArgs e) => MainContentArea.Content = _sheetControl;
+        private void BtnLoadKcs_Click(object sender, RoutedEventArgs e) => MainContentArea.Content = _kcsControl;
+
         private void BtnOpenSetting_Click(object sender, RoutedEventArgs e) {
             SettingWindow setWin = new SettingWindow { Owner = this };
             setWin.ShowDialog();

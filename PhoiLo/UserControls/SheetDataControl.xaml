@@ -2,7 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PhoiLo">
-    
     <Grid DataContext="{Binding Source={x:Static local:App.Config}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,18 +14,15 @@
         </DockPanel>
 
         <DataGrid x:Name="MainDataGrid" Grid.Row="1" 
-                  FontSize="{Binding TableFontSize}" 
-                  FontFamily="{Binding TableFontFamily}"
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  AlternatingRowBackground="#f2f2f2">
+                  FontSize="{Binding TableFontSize}" FontFamily="{Binding TableFontFamily}"
+                  AutoGenerateColumns="False" IsReadOnly="True" AlternatingRowBackground="#f2f2f2"
+                  SelectionUnit="CellOrRowHeader">
             
             <DataGrid.Resources>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold"/>
-                            </DataTemplate>
+                            <DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold"/></DataTemplate>
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Padding" Value="5"/>
