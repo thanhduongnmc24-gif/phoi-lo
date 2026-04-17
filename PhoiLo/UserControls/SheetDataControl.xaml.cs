@@ -50,10 +50,12 @@ namespace PhoiLo.UserControls
                         dt.Rows.Add(row);
                     }
 
-                    // [Suy luận] Thêm ?. để chặn lỗi CS8602 cực kỳ an toàn
                     dt.RowChanged += (s, e) => CalculateTotal(dt);
                     dt.RowDeleted += (s, e) => CalculateTotal(dt);
-                    dt.ColumnChanged += (s, e) => { if (e.Column?.ColumnName == "Số cây nạp lò") CalculateTotal(dt); };
+                    dt.ColumnChanged += (s, e) => { 
+                        if (e.Column?.ColumnName == "Số cây nạp lò" || e.Column?.ColumnName == "Hồi lò") 
+                            CalculateTotal(dt); 
+                    };
 
                     MainDataGrid.ItemsSource = dt.DefaultView;
                     CalculateTotal(dt); 
@@ -64,22 +66,30 @@ namespace PhoiLo.UserControls
 
         private void CalculateTotal(DataTable dt)
         {
-            int total = 0;
+            double totalNapLo = 0;
+            double totalHoiLo = 0;
+
             foreach (DataRow row in dt.Rows)
             {
                 if (row.RowState != DataRowState.Deleted) 
                 {
-                    if (int.TryParse(row["Số cây nạp lò"]?.ToString(), out int val))
+                    // Tính tổng Số cây nạp lò
+                    if (double.TryParse(row["Số cây nạp lò"]?.ToString(), out double valNap))
                     {
-                        total += val;
+                        totalNapLo += valNap;
+                    }
+                    // Tính tổng Hồi lò
+                    if (double.TryParse(row["Hồi lò"]?.ToString(), out double valHoi))
+                    {
+                        totalHoiLo += valHoi;
                     }
                 }
             }
             
             Dispatcher.Invoke(() => 
             {
-                // Nếu anh hai đã lưu file XAML thành công thì dòng này sẽ chạy mượt mà
-                if (TxtTongPhoi != null) TxtTongPhoi.Text = total.ToString();
+                if (TxtTongPhoi != null) TxtTongPhoi.Text = totalNapLo.ToString();
+                if (TxtTongHoiLo != null) TxtTongHoiLo.Text = totalHoiLo.ToString();
             });
         }
 
