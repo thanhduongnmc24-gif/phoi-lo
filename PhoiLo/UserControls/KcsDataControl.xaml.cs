@@ -29,6 +29,7 @@ namespace PhoiLo.UserControls
         }
 
         private void KcsDataGrid_PreviewKeyDown(object sender, KeyEventArgs e) {
+            // Xử lý dán dữ liệu (Ctrl + V)
             if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
                 string clipboardText = Clipboard.GetText();
                 if (string.IsNullOrEmpty(clipboardText)) return;
@@ -36,7 +37,6 @@ namespace PhoiLo.UserControls
                 string[] lines = clipboardText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 int startRow = KcsDataGrid.SelectedIndex < 0 ? 0 : KcsDataGrid.SelectedIndex;
                 
-                // [Suy luận] Lấy vị trí cột hiện tại đang được chọn để paste cho đúng
                 int startCol = 0;
                 if (KcsDataGrid.CurrentColumn != null) {
                     startCol = KcsDataGrid.CurrentColumn.DisplayIndex;
@@ -46,7 +46,6 @@ namespace PhoiLo.UserControls
                     string[] c = lines[i].Split('\t');
                     var row = _dataList[startRow + i];
                     
-                    // Rải dữ liệu từ cột đang chọn trở đi
                     for (int j = 0; j < c.Length; j++) {
                         int targetCol = startCol + j;
                         switch (targetCol) {
@@ -61,6 +60,46 @@ namespace PhoiLo.UserControls
                 }
                 KcsDataGrid.Items.Refresh(); 
                 e.Handled = true;
+            }
+            // [Suy luận] Xử lý sự kiện nhấn phím Delete để xóa nhiều ô đang chọn
+            else if (e.Key == Key.Delete) {
+                var selectedCells = KcsDataGrid.SelectedCells;
+                if (selectedCells.Count > 0) {
+                    foreach (var cellInfo in selectedCells) {
+                        var row = cellInfo.Item as KcsRow;
+                        if (row != null && cellInfo.Column != null) {
+                            int colIndex = cellInfo.Column.DisplayIndex;
+                            // Quét trúng cột nào, dọn sạch cột đó (kể cả STT)
+                            switch (colIndex) {
+                                case 0: row.STT = ""; break;
+                                case 1: row.PhuongThuc = ""; break;
+                                case 2: row.MacPhoi = ""; break;
+                                case 3: row.MeSo = ""; break;
+                                case 4: row.SoCayNap = ""; break;
+                                case 5: row.ChieuDai = ""; break;
+                            }
+                        }
+                    }
+                    KcsDataGrid.Items.Refresh();
+                    e.Handled = true; // Báo cho hệ thống biết là mình đã xử lý xong phím Delete
+                }
+            }
+        }
+
+        // [Suy luận] Xử lý nút bấm xóa sạch toàn bộ nội dung bảng
+        private void BtnClearAll_Click(object sender, RoutedEventArgs e) {
+            var result = MessageBox.Show("Anh hai có chắc chắn muốn XÓA SẠCH toàn bộ dữ liệu trong bảng này không?\n(Bao gồm cả cột STT)", "Cảnh báo xóa dữ liệu", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            
+            if (result == MessageBoxResult.Yes) {
+                foreach (var row in _dataList) {
+                    row.STT = "";
+                    row.PhuongThuc = "";
+                    row.MacPhoi = "";
+                    row.MeSo = "";
+                    row.SoCayNap = "";
+                    row.ChieuDai = "";
+                }
+                KcsDataGrid.Items.Refresh();
             }
         }
 

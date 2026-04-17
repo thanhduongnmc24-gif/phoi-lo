@@ -8,9 +8,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel Margin="0,0,0,10">
-            <TextBlock Text="NHẬP DỮ LIỆU PHÔI GỞI KCS" FontWeight="Bold" FontSize="16"/>
+            <TextBlock Text="NHẬP DỮ LIỆU PHÔI GỞI KCS" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <TextBlock x:Name="TxtFileCount" Text="Số file trong ngày: 0" VerticalAlignment="Center" Margin="0,0,15,0" FontWeight="Bold" Foreground="#d35400"/>
+                
+                <Button Content="🗑️ Xóa tất cả" Click="BtnClearAll_Click" Padding="15,5" Background="#e74c3c" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
+                
                 <Button Content="🚀 XUẤT EXCEL" Click="BtnExportExcel_Click" Padding="20,5" Background="#2980b9" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>
         </DockPanel>
