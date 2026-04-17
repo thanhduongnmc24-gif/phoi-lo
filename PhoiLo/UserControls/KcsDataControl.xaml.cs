@@ -34,19 +34,30 @@ namespace PhoiLo.UserControls
                 if (string.IsNullOrEmpty(clipboardText)) return;
 
                 string[] lines = clipboardText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                int start = KcsDataGrid.SelectedIndex < 0 ? 0 : KcsDataGrid.SelectedIndex;
+                int startRow = KcsDataGrid.SelectedIndex < 0 ? 0 : KcsDataGrid.SelectedIndex;
+                
+                // [Suy luận] Lấy vị trí cột hiện tại đang được chọn để paste cho đúng
+                int startCol = 0;
+                if (KcsDataGrid.CurrentColumn != null) {
+                    startCol = KcsDataGrid.CurrentColumn.DisplayIndex;
+                }
 
-                for (int i = 0; i < lines.Length && (start + i) < _dataList.Count; i++) {
+                for (int i = 0; i < lines.Length && (startRow + i) < _dataList.Count; i++) {
                     string[] c = lines[i].Split('\t');
-                    var row = _dataList[start + i];
+                    var row = _dataList[startRow + i];
                     
-                    // [Suy luận] Chỉnh lại chỉ số để c[0] khớp với STT, c[1] khớp với Phương thức...
-                    if (c.Length > 0) row.STT = c[0];
-                    if (c.Length > 1) row.PhuongThuc = c[1];
-                    if (c.Length > 2) row.MacPhoi = c[2];
-                    if (c.Length > 3) row.MeSo = c[3];
-                    if (c.Length > 4) row.SoCayNap = c[4];
-                    if (c.Length > 5) row.ChieuDai = c[5];
+                    // Rải dữ liệu từ cột đang chọn trở đi
+                    for (int j = 0; j < c.Length; j++) {
+                        int targetCol = startCol + j;
+                        switch (targetCol) {
+                            case 0: row.STT = c[j]; break;
+                            case 1: row.PhuongThuc = c[j]; break;
+                            case 2: row.MacPhoi = c[j]; break;
+                            case 3: row.MeSo = c[j]; break;
+                            case 4: row.SoCayNap = c[j]; break;
+                            case 5: row.ChieuDai = c[j]; break;
+                        }
+                    }
                 }
                 KcsDataGrid.Items.Refresh(); 
                 e.Handled = true;
@@ -98,7 +109,7 @@ namespace PhoiLo.UserControls
                     ws.Range("A3:F3").Style.Font.Bold = true;
 
                     int r = 4;
-                    foreach (var item in _dataList.Where(i => !string.IsNullOrEmpty(i.MacPhoi) || !string.IsNullOrEmpty(i.MeSo))) {
+                    foreach (var item in _dataList.Where(i => !string.IsNullOrEmpty(i.MacPhoi) || !string.IsNullOrEmpty(i.MeSo) || !string.IsNullOrEmpty(i.PhuongThuc))) {
                         ws.Cell(r, 1).Value = item.STT; 
                         ws.Cell(r, 2).Value = item.PhuongThuc;
                         ws.Cell(r, 3).Value = item.MacPhoi; 
@@ -110,10 +121,10 @@ namespace PhoiLo.UserControls
                     ws.Columns().AdjustToContents();
                     wb.SaveAs(filePath);
                 }
-                MessageBox.Show($"Đã xuất file vào thư mục: ExportKCS\\{subFolderName}"); 
+                MessageBox.Show($"Đã xuất file vào thư mục: ExportKCS\\{subFolderName}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information); 
                 UpdateFileCount();
             }
-            catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
+            catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
     }
 }
