@@ -16,14 +16,24 @@ namespace PhoiLo.Models
 
     public class AppConfig : INotifyPropertyChanged
     {
-        private string _clientId = "";
-        private string _clientSecret = "";
-        private string _sheetId = "";
-        private string _range = "Phoi!A11:J410";
+        // --- Độ rộng 10 cột bảng Pulpit 1 ---
         private double _col1Width = 50; private double _col2Width = 120; private double _col3Width = 90;
         private double _col4Width = 80; private double _col5Width = 110; private double _col6Width = 110;
         private double _col7Width = 110; private double _col8Width = 80; private double _col9Width = 180;
         private double _col10Width = 100;
+
+        // --- [Suy luận] Độ rộng 6 cột bảng KCS mới thêm ---
+        private double _kcsCol1Width = 40;  // STT
+        private double _kcsCol2Width = 150; // Phương thức
+        private double _kcsCol3Width = 120; // Mác phôi
+        private double _kcsCol4Width = 100; // Mẻ số
+        private double _kcsCol5Width = 100; // Số cây nạp lò
+        private double _kcsCol6Width = 100; // Chiều dài
+
+        private string _clientId = "";
+        private string _clientSecret = "";
+        private string _sheetId = "";
+        private string _range = "Phoi!A11:J410";
         private double _tableFontSize = 14; private double _menuFontSize = 16;
         private string _tableFontFamily = "Segoe UI"; private string _menuFontFamily = "Segoe UI";
 
@@ -33,10 +43,7 @@ namespace PhoiLo.Models
         private string _currentToTruong = "";
         private string _currentVanHanh = "";
 
-        public string ClientId { get => _clientId; set { _clientId = value; OnPropertyChanged(); } }
-        public string ClientSecret { get => _clientSecret; set { _clientSecret = value; OnPropertyChanged(); } }
-        public string SheetId { get => _sheetId; set { _sheetId = value; OnPropertyChanged(); } }
-        public string Range { get => _range; set { _range = value; OnPropertyChanged(); } }
+        // Properties cho bảng Pulpit
         public double Col1Width { get => _col1Width; set { _col1Width = value; OnPropertyChanged(); } }
         public double Col2Width { get => _col2Width; set { _col2Width = value; OnPropertyChanged(); } }
         public double Col3Width { get => _col3Width; set { _col3Width = value; OnPropertyChanged(); } }
@@ -47,11 +54,23 @@ namespace PhoiLo.Models
         public double Col8Width { get => _col8Width; set { _col8Width = value; OnPropertyChanged(); } }
         public double Col9Width { get => _col9Width; set { _col9Width = value; OnPropertyChanged(); } }
         public double Col10Width { get => _col10Width; set { _col10Width = value; OnPropertyChanged(); } }
+
+        // --- Properties cho bảng KCS ---
+        public double KcsCol1Width { get => _kcsCol1Width; set { _kcsCol1Width = value; OnPropertyChanged(); } }
+        public double KcsCol2Width { get => _kcsCol2Width; set { _kcsCol2Width = value; OnPropertyChanged(); } }
+        public double KcsCol3Width { get => _kcsCol3Width; set { _kcsCol3Width = value; OnPropertyChanged(); } }
+        public double KcsCol4Width { get => _kcsCol4Width; set { _kcsCol4Width = value; OnPropertyChanged(); } }
+        public double KcsCol5Width { get => _kcsCol5Width; set { _kcsCol5Width = value; OnPropertyChanged(); } }
+        public double KcsCol6Width { get => _kcsCol6Width; set { _kcsCol6Width = value; OnPropertyChanged(); } }
+
+        public string ClientId { get => _clientId; set { _clientId = value; OnPropertyChanged(); } }
+        public string ClientSecret { get => _clientSecret; set { _clientSecret = value; OnPropertyChanged(); } }
+        public string SheetId { get => _sheetId; set { _sheetId = value; OnPropertyChanged(); } }
+        public string Range { get => _range; set { _range = value; OnPropertyChanged(); } }
         public double TableFontSize { get => _tableFontSize; set { _tableFontSize = value; OnPropertyChanged(); } }
         public double MenuFontSize { get => _menuFontSize; set { _menuFontSize = value; OnPropertyChanged(); } }
         public string TableFontFamily { get => _tableFontFamily; set { _tableFontFamily = value; OnPropertyChanged(); } }
         public string MenuFontFamily { get => _menuFontFamily; set { _menuFontFamily = value; OnPropertyChanged(); } }
-
         public ObservableCollection<StaffMember> StaffList { get => _staffList; set { _staffList = value; OnPropertyChanged(); } }
         public DateTime CurrentDate { get => _currentDate; set { _currentDate = value; OnPropertyChanged(); } }
         public string CurrentKip { get => _currentKip; set { _currentKip = value; OnPropertyChanged(); } }
@@ -70,7 +89,6 @@ namespace PhoiLo.Models
                     if (cfg != null) {
                         if (cfg.StaffList == null) cfg.StaffList = new ObservableCollection<StaffMember>();
                         if (cfg.CurrentDate.Year < 2000) cfg.CurrentDate = DateTime.Now; 
-                        if (string.IsNullOrEmpty(cfg.CurrentKip)) cfg.CurrentKip = "1A";
                         return cfg;
                     }
                 }
