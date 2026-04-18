@@ -28,6 +28,7 @@
         <DataGrid x:Name="MainDataGrid" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0"
                   AutoGenerateColumns="False" IsReadOnly="False" AlternatingRowBackground="#f2f2f2"
                   SelectionUnit="CellOrRowHeader"
+                  PreviewKeyDown="MainDataGrid_PreviewKeyDown"
                   FontSize="{Binding Data.TableFontSize, Source={StaticResource Proxy}}" 
                   FontFamily="{Binding Data.TableFontFamily, Source={StaticResource Proxy}}">
             <DataGrid.Resources>

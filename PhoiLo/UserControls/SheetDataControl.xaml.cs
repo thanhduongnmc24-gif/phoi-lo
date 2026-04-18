@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -15,7 +16,6 @@ namespace PhoiLo.UserControls
 {
     public partial class SheetDataControl : UserControl
     {
-        // [Suy luận] Dùng cờ này để tránh việc code tự sửa dữ liệu lại gọi ngược event sinh ra vòng lặp vô tận
         private bool _isRecalculating = false;
 
         public SheetDataControl()
@@ -53,12 +53,10 @@ namespace PhoiLo.UserControls
                         dt.Rows.Add(row);
                     }
 
-                    // 1. Vừa tải về xong là tính toán lại hết các cột luôn
                     RecalculatePulpitData(dt);
 
                     dt.RowChanged += (s, e) => { if (!_isRecalculating) CalculateTotal(dt); };
                     dt.RowDeleted += (s, e) => { if (!_isRecalculating) CalculateTotal(dt); };
-                    // Bắt sự kiện khi anh hai gõ thay đổi thông số trên lưới
                     dt.ColumnChanged += Dt_ColumnChanged;
 
                     MainDataGrid.ItemsSource = dt.DefaultView;
@@ -68,27 +66,100 @@ namespace PhoiLo.UserControls
             catch (Exception ex) { MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message); }
         }
 
+        private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var dv = MainDataGrid.ItemsSource as DataView;
+            if (dv?.Table == null) return;
+            var dt = dv.Table;
+
+            // Xử lý dán dữ liệu (Ctrl + V)
+            if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                string clipboardText = Clipboard.GetText();
+                if (string.IsNullOrEmpty(clipboardText)) return;
+
+                string[] lines = clipboardText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                int startRow = MainDataGrid.SelectedIndex < 0 ? 0 : MainDataGrid.SelectedIndex;
+                
+                int startCol = 0;
+                if (MainDataGrid.CurrentColumn != null)
+                {
+                    startCol = MainDataGrid.CurrentColumn.DisplayIndex;
+                }
+
+                // [Suy luận] Khóa tự động tính để dán mượt mà, không bị lag tung chảo
+                _isRecalculating = true; 
+
+                for (int i = 0; i < lines.Length && (startRow + i) < dt.Rows.Count; i++)
+                {
+                    string[] c = lines[i].Split('\t');
+                    var row = dt.Rows[startRow + i];
+                    
+                    for (int j = 0; j < c.Length; j++)
+                    {
+                        int targetCol = startCol + j;
+                        // Điền dữ liệu nếu chưa văng ra khỏi bảng
+                        if (targetCol < dt.Columns.Count)
+                        {
+                            row[targetCol] = c[j];
+                        }
+                    }
+                }
+
+                RecalculatePulpitData(dt);
+                CalculateTotal(dt);
+                _isRecalculating = false;
+
+                e.Handled = true;
+            }
+            // Xử lý nút Delete để xóa nhiều ô
+            else if (e.Key == Key.Delete)
+            {
+                var selectedCells = MainDataGrid.SelectedCells;
+                if (selectedCells.Count > 0)
+                {
+                    _isRecalculating = true;
+
+                    foreach (var cellInfo in selectedCells)
+                    {
+                        var rowView = cellInfo.Item as DataRowView;
+                        if (rowView != null && cellInfo.Column != null)
+                        {
+                            int colIndex = cellInfo.Column.DisplayIndex;
+                            if (colIndex >= 0 && colIndex < dt.Columns.Count)
+                            {
+                                rowView.Row[colIndex] = ""; 
+                            }
+                        }
+                    }
+
+                    RecalculatePulpitData(dt);
+                    CalculateTotal(dt);
+                    _isRecalculating = false;
+
+                    e.Handled = true;
+                }
+            }
+        }
+
         private void Dt_ColumnChanged(object sender, DataColumnChangeEventArgs e)
         {
             if (_isRecalculating) return;
 
-            // Nếu sửa một trong 3 cột này thì tự động nhảy số lại các cột kết quả
             if (e.Column?.ColumnName == "Số cây nạp lò" || 
                 e.Column?.ColumnName == "Hồi lò" || 
                 e.Column?.ColumnName == "Hư công nghệ") 
             {
                 _isRecalculating = true;
-                // Gọi hàm tính toán lại nguyên bảng để số cộng dồn chuẩn xác
                 RecalculatePulpitData(e.Row.Table);
                 CalculateTotal(e.Row.Table);
                 _isRecalculating = false;
             }
         }
 
-        // Hàm Tèo viết riêng để chuyên môn hoá việc tính toán 
         private void RecalculatePulpitData(DataTable dt)
         {
-            double tongSoThanh = 0; // Biến giữ giá trị để cộng dồn
+            double tongSoThanh = 0; 
             
             foreach (DataRow row in dt.Rows)
             {
@@ -103,10 +174,8 @@ namespace PhoiLo.UserControls
                 double hoiLo = 0;
                 double.TryParse(row["Hồi lò"]?.ToString(), out hoiLo);
 
-                // Yêu cầu 1a: Cột 5 = Cột 4 - Cột 6 - Cột 7
                 row["Ra sàn nguội"] = (soCayNap - huCongNghe - hoiLo).ToString();
 
-                // Yêu cầu 1b: Cột 8 = Cộng dồn cột 4 từ trên xuống dưới
                 tongSoThanh += soCayNap;
                 row["Tổng số thanh khi hết mẻ"] = tongSoThanh.ToString();
             }
@@ -151,7 +220,6 @@ namespace PhoiLo.UserControls
 
                 var dt = dv.Table;
 
-                // Yêu cầu 2: Trước khi đưa dữ liệu lên Google Sheet thì gọi tính lại 1 vòng cho chắc ăn
                 _isRecalculating = true;
                 RecalculatePulpitData(dt);
                 CalculateTotal(dt);
