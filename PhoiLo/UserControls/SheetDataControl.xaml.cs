@@ -120,7 +120,9 @@ namespace PhoiLo.UserControls
 
                 UserCredential credential = await GetCredential();
                 var service = new SheetsService(new BaseClientService.Initializer() { HttpClientInitializer = credential, ApplicationName = "PhoiLo" });
-                await service.Spreadsheets.Values.Update(new ValueRange { Values = values }, App.Config.SheetId, App.Config.Range).ExecuteAsync();
+                var request = service.Spreadsheets.Values.Update(new ValueRange { Values = values }, App.Config.SheetId, App.Config.Range);
+request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+await request.ExecuteAsync();
                 MessageBox.Show("🚀 Thành công!");
             } catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
         }
