@@ -28,7 +28,7 @@ namespace PhoiLo.Models
         private string _clientId = "", _clientSecret = "", _sheetId = "", _range = "Phoi!A11:J410", _tableFontFamily = "Segoe UI", _menuFontFamily = "Segoe UI";
         private double _tableFontSize = 14, _menuFontSize = 16;
         
-        // [Suy luận] Đây là túi thần kỳ lưu độ rộng của hàng tỷ cột mà không cần khai báo trước
+        // Túi thần kỳ lưu độ rộng cột tự động
         private Dictionary<string, double> _columnWidths = new Dictionary<string, double>();
         public Dictionary<string, double> ColumnWidths { get => _columnWidths; set { _columnWidths = value; OnPropertyChanged(); } }
 
@@ -68,7 +68,11 @@ namespace PhoiLo.Models
                     if (cfg != null) {
                         if (cfg.StaffList == null) cfg.StaffList = new ObservableCollection<StaffMember>();
                         if (cfg.ColumnWidths == null) cfg.ColumnWidths = new Dictionary<string, double>();
-                        if (cfg.CurrentDate.Year < 2000) cfg.CurrentDate = DateTime.Now; 
+                        
+                        // [Suy luận] Thay vì kiểm tra năm < 2000, 
+                        // Tèo ép nó luôn luôn lấy ngày hiện tại của máy tính khi mở app.
+                        cfg.CurrentDate = DateTime.Now; 
+                        
                         return cfg;
                     }
                 }
