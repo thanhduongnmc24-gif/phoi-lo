@@ -29,10 +29,18 @@
 
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2c3e50">
             <TextBlock Text="DANH MỤC" Foreground="White" FontWeight="Bold" Margin="0,30,0,20" HorizontalAlignment="Center" FontSize="14"/>
-            <Button Content="📊 Pulpit 1" Click="BtnLoadSheet_Click" Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-            <Button Content="🔥 Phôi nóng" Click="BtnHotBillet_Click" Height="45" Margin="5" Background="Transparent" Foreground="#e67e22" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
-            <Button Content="📦 Phôi KCS" Click="BtnLoadKcs_Click" Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-            <Button Content="⚙ Cài đặt" Click="BtnOpenSetting_Click" Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            
+            <Button x:Name="BtnMenuPulpit" Content="📊 Pulpit 1" Click="BtnLoadSheet_Click" 
+                    Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            
+            <Button x:Name="BtnMenuHot" Content="🔥 Phôi nóng" Click="BtnHotBillet_Click" 
+                    Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            
+            <Button x:Name="BtnMenuKcs" Content="📦 Phôi KCS" Click="BtnLoadKcs_Click" 
+                    Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+            
+            <Button x:Name="BtnMenuSetting" Content="⚙ Cài đặt" Click="BtnOpenSetting_Click" 
+                    Height="45" Margin="5" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="1" Margin="10">
