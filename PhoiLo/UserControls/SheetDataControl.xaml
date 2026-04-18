@@ -10,14 +10,15 @@
     <Grid DataContext="{Binding Source={x:Static local:App.Config}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition x:Name="RightPanelColumn" Width="250"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
             <TextBlock Text="DỮ LIỆU PHÔI GỞI PULPIT 1" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="🚀 Gởi phôi lên gg sheet" Click="BtnPush_Click" Padding="15,5" Background="#3498db" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
@@ -25,7 +26,7 @@
             </StackPanel>
         </DockPanel>
 
-        <DataGrid x:Name="MainDataGrid" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0"
+        <DataGrid x:Name="MainDataGrid" Grid.Row="1" Grid.Column="0" Margin="0,0,0,0"
                   AutoGenerateColumns="False" IsReadOnly="False" AlternatingRowBackground="#f2f2f2"
                   SelectionUnit="CellOrRowHeader"
                   PreviewKeyDown="MainDataGrid_PreviewKeyDown"
@@ -62,7 +63,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Border Grid.Row="1" Grid.Column="1" Background="#ecf0f1" CornerRadius="5" Padding="10">
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="#bdc3c7" ResizeBehavior="PreviousAndNext"/>
+
+        <Border x:Name="SummaryBorder" Grid.Row="1" Grid.Column="2" Background="#ecf0f1" CornerRadius="0,5,5,0" Padding="10" SizeChanged="SummaryBorder_SizeChanged">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Text="TỔNG HỢP" FontWeight="Bold" FontSize="14" Margin="0,0,0,10" Foreground="#2c3e50" HorizontalAlignment="Center"/>

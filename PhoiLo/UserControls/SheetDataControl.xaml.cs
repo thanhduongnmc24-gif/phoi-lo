@@ -18,14 +18,31 @@ namespace PhoiLo.UserControls
     public partial class SheetDataControl : UserControl
     {
         private bool _isRecalculating = false;
+        private bool _isInitializing = true;
 
         public SheetDataControl()
         {
             InitializeComponent();
             LoadDataFromGoogle();
-            
-            // [Suy luận] Chỉ với 1 dòng này, bảng sẽ tự nhớ mọi tương tác kéo thả độ rộng
             DataGridHelper.EnableWidthAutoSave(MainDataGrid, "Pulpit1");
+            
+            // [Suy luận] Khôi phục độ rộng của cái Panel Tổng hợp từ file JSON
+            if (App.Config.ColumnWidths.TryGetValue("Pulpit1_RightPanelWidth", out double w) && w > 50) {
+                RightPanelColumn.Width = new GridLength(w);
+            }
+            _isInitializing = false;
+        }
+
+        // Sự kiện này nổ ra mỗi khi anh hai dùng GridSplitter để kéo panel
+        private void SummaryBorder_SizeChanged(object sender, SizeChangedEventArgs e) {
+            if (_isInitializing || App.Config.ColumnWidths == null) return;
+            
+            double currentWidth = SummaryBorder.ActualWidth;
+            // Đã sửa lại đúng tên biến currentWidth
+            if (currentWidth > 50) {
+                App.Config.ColumnWidths["Pulpit1_RightPanelWidth"] = currentWidth;
+                DataGridHelper.SaveConfig(); // Nhờ thằng Helper lưu dùm
+            }
         }
 
         private void BtnReload_Click(object sender, RoutedEventArgs e) => LoadDataFromGoogle();
@@ -50,15 +67,13 @@ namespace PhoiLo.UserControls
                     foreach (var r in response.Values)
                     {
                         var row = dt.NewRow();
-                        for (int j = 0; j < headers.Length; j++)
-                        {
+                        for (int j = 0; j < headers.Length; j++) {
                             if (j < r.Count) row[j] = r[j]?.ToString() ?? "";
                         }
                         dt.Rows.Add(row);
                     }
 
                     RecalculatePulpitData(dt);
-
                     dt.ColumnChanged += (s, e) => {
                         if (!_isRecalculating && e.Column != null && (e.Column.ColumnName == "Số cây nạp lò" || e.Column.ColumnName == "Hồi lò" || e.Column.ColumnName == "Hư công nghệ"))
                         {
@@ -112,7 +127,6 @@ namespace PhoiLo.UserControls
                 if (row.RowState != DataRowState.Deleted) {
                     double n; double.TryParse(row["Số cây nạp lò"]?.ToString(), out n);
                     tNap += n;
-
                     double h; if (double.TryParse(row["Hồi lò"]?.ToString(), out h)) tHoi += h;
 
                     string pt = row["Phương thức nạp"]?.ToString() ?? "";
@@ -143,11 +157,9 @@ namespace PhoiLo.UserControls
 
                 UserCredential credential = await GetCredential();
                 var service = new SheetsService(new BaseClientService.Initializer() { HttpClientInitializer = credential, ApplicationName = "PhoiLo" });
-                
                 var request = service.Spreadsheets.Values.Update(new ValueRange { Values = values }, App.Config.SheetId, App.Config.Range);
                 request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
                 await request.ExecuteAsync();
-
                 MessageBox.Show("🚀 Đã gởi phôi lên Google Sheets thành công!");
             } catch (Exception ex) { MessageBox.Show("Lỗi gởi dữ liệu: " + ex.Message); }
         }

@@ -14,33 +14,29 @@ namespace PhoiLo.Helpers
     {
         private static DispatcherTimer? _saveTimer;
 
-        // [Suy luận] Hàm thông minh lưu độ rộng đã được bọc giáp chống ghi đè
+        // [Suy luận] Hàm này giúp lưu cấu hình có độ trễ (Debounce) để tránh ghi file liên tục gây lag
+        public static void SaveConfig() => RequestSave();
+
         public static void EnableWidthAutoSave(DataGrid grid, string tableName)
         {
-            // Cờ khóa: true = đang nạp dữ liệu, cấm lưu bậy bạ.
             bool isRestoring = true;
 
             Action applyWidths = () => {
-                isRestoring = true; // Bật khóa an toàn
+                isRestoring = true;
                 if (App.Config.ColumnWidths != null) {
                     for (int i = 0; i < grid.Columns.Count; i++) {
                         string key = $"{tableName}_Col{i}";
                         if (App.Config.ColumnWidths.TryGetValue(key, out double width) && width > 5) {
-                            // Ép cứng WPF dùng Pixel, không cho dùng Auto để khỏi tự nhảy
                             grid.Columns[i].Width = new DataGridLength(width, DataGridLengthUnitType.Pixel);
                         }
                     }
                 }
-                // Chờ WPF vẽ xong toàn bộ giao diện rồi mới mở khóa
                 grid.Dispatcher.BeginInvoke(new Action(() => isRestoring = false), DispatcherPriority.Render);
             };
 
-            // Khi bảng vừa được tải lên màn hình
             grid.Loaded += (s, e) => applyWidths();
 
-            // Bắt sự kiện khi bảng có bất kỳ thay đổi đồ họa nào (kéo cột)
             grid.LayoutUpdated += (s, e) => {
-                // Kẻ thù đây rồi: Nếu đang khôi phục, hoặc bảng đang bị ẩn đi, thì cấm lưu để tránh ghi đè sai
                 if (isRestoring || !grid.IsLoaded || !grid.IsVisible) return;
 
                 if (App.Config.ColumnWidths == null) App.Config.ColumnWidths = new Dictionary<string, double>();
@@ -48,10 +44,8 @@ namespace PhoiLo.Helpers
                 for (int i = 0; i < grid.Columns.Count; i++) {
                     string key = $"{tableName}_Col{i}";
                     double currentActual = grid.Columns[i].ActualWidth;
-                    
                     App.Config.ColumnWidths.TryGetValue(key, out double savedValue);
                     
-                    // Chỉ lưu khi người dùng thực sự kéo cột (lệch > 2 pixel)
                     if (Math.Abs(currentActual - savedValue) > 2.0 && currentActual > 5) {
                         App.Config.ColumnWidths[key] = currentActual;
                         changed = true;
