@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using PhoiLo.Helpers;
 
 namespace PhoiLo.Windows
 {
@@ -7,13 +10,20 @@ namespace PhoiLo.Windows
         public SettingWindow()
         {
             InitializeComponent();
-            // Gán dữ liệu dùng chung để thay đổi real-time
             this.DataContext = App.Config;
+        }
+
+        private void StaffGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Ép kiểu an toàn, không lo lỗi thiếu tên nữa
+            if (sender is DataGrid grid)
+            {
+                DataGridHelper.HandleExcelActions(grid, e);
+            }
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            // Lưu toàn bộ các ô nhập liệu vào file config.json
             App.Config.SaveToFile();
             this.Close();
         }

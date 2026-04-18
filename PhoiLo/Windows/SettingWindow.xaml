@@ -61,6 +61,7 @@
         <GroupBox Grid.Column="1" Header="DANH SÁCH NHÂN SỰ (Kíp A/B/C)" Padding="10">
     <DataGrid ItemsSource="{Binding StaffList}" AutoGenerateColumns="False" CanUserAddRows="True" 
               AlternatingRowBackground="#f2f2f2"
+              PreviewKeyDown="StaffGrid_PreviewKeyDown"
               FontSize="{Binding TableFontSize}" FontFamily="{Binding TableFontFamily}">
         <DataGrid.Columns>
             <DataGridTextColumn Header="Kíp" Binding="{Binding Kip}" Width="60"/>

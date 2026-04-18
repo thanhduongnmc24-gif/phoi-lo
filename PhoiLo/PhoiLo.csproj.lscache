@@ -57,6 +57,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0-windows
 [sourceFiles]
 App.xaml.cs
 AssemblyInfo.cs
+Helpers/DataGridHelper.cs
 MainWindow.xaml.cs
 Models/AppConfig.cs
 obj/Debug/net8.0-windows/
